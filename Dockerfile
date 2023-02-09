@@ -1,5 +1,5 @@
 ARG APP_PATH=/opt/outline
-FROM outlinewiki/outline-base as base
+FROM wiki-base as base
 
 ARG APP_PATH
 WORKDIR $APP_PATH
@@ -22,7 +22,11 @@ RUN addgroup -g 1001 -S nodejs && \
   adduser -S nodejs -u 1001 && \
   chown -R nodejs:nodejs $APP_PATH/build
 
-USER nodejs
+RUN apk update && apk add ca-certificates && rm -rf /var/cache/apk/*
+
+COPY ./start.sh /start.sh
+
+USER root
 
 EXPOSE 3000
-CMD ["yarn", "start"]
+CMD ["/start.sh"]
